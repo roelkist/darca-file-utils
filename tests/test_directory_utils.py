@@ -1,6 +1,5 @@
 import os
 
-import pytest
 from directory_utils import (  # Ensure this module is available on PYTHONPATH
     DirectoryUtils,
 )

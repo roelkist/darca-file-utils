@@ -1,10 +1,10 @@
 import shutil
-
 import pytest
 
 
 # A simple fixture for a temporary test directory.
-# Although pytest’s tmp_path is available, you may define additional common fixtures here if needed.
+# Although pytest’s tmp_path is available, you may define additional common
+# fixtures here if needed.
 @pytest.fixture
 def temp_test_dir(tmp_path):
     test_dir = tmp_path / "test_dir"

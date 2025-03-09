@@ -17,14 +17,16 @@ class YamlUtils:
         """
         Loads a YAML file and returns its content as a dictionary.
 
-        This method uses FileUtils.read_file to read the file content and then parses the content using PyYAML.
+        This method uses FileUtils.read_file to read the file content and
+          then parses the content using PyYAML.
 
         Args:
             file_path (str): The path to the YAML file.
 
         Returns:
             dict: A dictionary representing the YAML content.
-                  Returns an empty dictionary if the file does not exist or an error occurs during reading or parsing.
+                  Returns an empty dictionary if the file does not exist or
+                  an error occurs during reading or parsing.
 
         Example:
             >>> config = YamlUtils.load_yaml_file("config.yaml")
@@ -48,20 +50,24 @@ class YamlUtils:
     @staticmethod
     def write_yaml_file(file_path: str, data: dict) -> bool:
         """
-        Serializes a dictionary to a YAML formatted string and writes it to a file.
+        Serializes a dictionary to a YAML formatted string and writes it
+          to a file.
 
-        This method converts the provided dictionary into YAML format using PyYAML's safe_dump, then writes
-        the content to the specified file using FileUtils.write_file.
+        This method converts the provided dictionary into YAML format using
+         PyYAML's safe_dump, then writes the content to the specified file
+         using FileUtils.write_file.
 
         Args:
             file_path (str): The path to the YAML file.
             data (dict): The dictionary data to be serialized and written.
 
         Returns:
-            bool: True if the YAML file was written successfully, False otherwise.
+            bool: True if the YAML file was written successfully,
+                    False otherwise.
 
         Example:
-            >>> success = YamlUtils.write_yaml_file("config.yaml", {"key": "value"})
+            >>> success = YamlUtils.write_yaml_file("config.yaml",
+                                                    {"key": "value"})
             >>> print(success)
             True
         """

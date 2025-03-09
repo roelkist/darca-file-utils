@@ -44,7 +44,8 @@ class FileUtils:
         Args:
             file_path (str): The path to the file.
             content (str): The content to be written.
-            mode (str, optional): The file opening mode (default is "w" for write).
+            mode (str, optional): The file opening mode (default is "w" for
+                                                         write).
             encoding (str, optional): The file encoding (default is "utf-8").
 
         Returns:
@@ -78,11 +79,13 @@ class FileUtils:
 
         Args:
             file_path (str): The path to the file.
-            mode (str, optional): The file opening mode (default is "r" for read).
+            mode (str, optional): The file opening mode (default is "r"
+                                                             for read).
             encoding (str, optional): The file encoding (default is "utf-8").
 
         Returns:
-            str: The content of the file. Returns an empty string if the file does not exist or an error occurs.
+            str: The content of the file. Returns an empty string if the file
+                     does not exist or an error occurs.
 
         Example:
             >>> content = FileUtils.read_file("/tmp/hello.txt")
@@ -140,7 +143,8 @@ class FileUtils:
             bool: True if the file was renamed successfully, False otherwise.
 
         Example:
-            >>> FileUtils.rename_file("/tmp/old_name.txt", "/tmp/new_name.txt")
+            >>> FileUtils.rename_file("/tmp/old_name.txt",
+                                    "/tmp/new_name.txt")
             True
         """
         if not FileUtils.file_exist(src):

@@ -1,7 +1,3 @@
-import os
-import shutil
-
-import pytest
 from file_utils import FileUtils  # Ensure the project root is on PYTHONPATH
 
 
