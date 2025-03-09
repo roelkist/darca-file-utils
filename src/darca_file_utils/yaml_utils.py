@@ -10,6 +10,7 @@ import yaml
 from common.logging import log_debug, log_error
 from file_utils import FileUtils  # Reusing file operations from FileUtils
 
+
 class YamlUtils:
     @staticmethod
     def load_yaml_file(file_path: str) -> dict:
@@ -17,7 +18,7 @@ class YamlUtils:
         Loads a YAML file and returns its content as a dictionary.
 
         This method uses FileUtils.read_file to read the file content and then parses the content using PyYAML.
-        
+
         Args:
             file_path (str): The path to the YAML file.
 

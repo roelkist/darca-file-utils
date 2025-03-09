@@ -9,7 +9,9 @@ Each method is documented with its purpose, parameters, and return values.
 
 import os
 import shutil
+
 from common.logging import log_debug, log_error
+
 
 class DirectoryUtils:
     @staticmethod
@@ -91,7 +93,9 @@ class DirectoryUtils:
                         full_path = os.path.join(root, file)
                         relative_path = os.path.relpath(full_path, path)
                         collected_files.append(relative_path)
-                log_debug(f"Recursively collected file paths in '{path}': {collected_files}")
+                log_debug(
+                    f"Recursively collected file paths in '{path}': {collected_files}"
+                )
                 return collected_files
         except Exception as e:
             log_error(f"Error listing directory '{path}': {e}")

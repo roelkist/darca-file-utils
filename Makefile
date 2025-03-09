@@ -1,32 +1,23 @@
-.PHONY: all reformat tests requirements precommit coverage docs clean
+.PHONY: all format lint test security check
 
-# Default target: run tests.
-all: tests
+# Default target: run tests
+all: test
 
-reformat:
-	black -l 79 .
-	isort -l 79 --profile black .
+# Auto-format code using Black and isort using tox
+format:
+	tox -e format
 
-tests:
+# Linting using flake8, black, and isort via tox
+lint:
+	tox -e lint
+
+# Run tests with pytest inside tox environments
+test:
 	tox -r
 
-requirements:
-	pipenv lock
-	pipenv requirements > requirements.txt
-	pipenv requirements --dev > requirements-dev.txt
+# Security checks using bandit, safety, and pip-audit via tox
+security:
+	tox -e security
 
-precommit:
-	pre-commit install
-	pre-commit run --all-files --show-diff-on-failure
-
-coverage:
-	coverage report
-	coverage html -i
-
-docs:
-	tox -e docs
-
-clean:
-	@echo "Cleaning up temporary files..."
-	find . -type f -name '*.pyc' -delete
-	find . -type d -name '__pycache__' -delete
+# Run all checks before pushing code (format, lint, test, security)
+check: format lint test security

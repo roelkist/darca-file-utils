@@ -1,7 +1,9 @@
 import os
-import pytest
 
-from directory_utils import DirectoryUtils  # Ensure this module is available on PYTHONPATH
+import pytest
+from directory_utils import \
+    DirectoryUtils  # Ensure this module is available on PYTHONPATH
+
 
 def test_directory_exist(tmp_path):
     # Create a directory and check for its existence
@@ -13,6 +15,7 @@ def test_directory_exist(tmp_path):
     non_exist_dir = tmp_path / "nonexist_dir"
     assert DirectoryUtils.directory_exist(str(non_exist_dir)) is False
 
+
 def test_create_directory(tmp_path):
     new_dir = tmp_path / "new_folder"
     # Ensure directory does not exist initially
@@ -20,6 +23,7 @@ def test_create_directory(tmp_path):
     # Create the directory
     assert DirectoryUtils.create_directory(str(new_dir)) is True
     assert new_dir.exists()
+
 
 def test_list_directory(tmp_path):
     test_dir = tmp_path / "list_test"
@@ -44,6 +48,7 @@ def test_list_directory(tmp_path):
     assert "file2.txt" in rec_contents
     assert os.path.join("subfolder", "file3.txt") in rec_contents
 
+
 def test_remove_directory(tmp_path):
     test_dir = tmp_path / "remove_dir"
     test_dir.mkdir()
@@ -53,6 +58,7 @@ def test_remove_directory(tmp_path):
     assert DirectoryUtils.remove_directory(str(test_dir)) is True
     assert not test_dir.exists()
 
+
 def test_rename_directory(tmp_path):
     src_dir = tmp_path / "old_name"
     dst_dir = tmp_path / "new_name"
@@ -61,6 +67,7 @@ def test_rename_directory(tmp_path):
     assert DirectoryUtils.rename_directory(str(src_dir), str(dst_dir)) is True
     assert not src_dir.exists()
     assert dst_dir.exists()
+
 
 def test_move_directory(tmp_path):
     src_dir = tmp_path / "move_src"
@@ -74,6 +81,7 @@ def test_move_directory(tmp_path):
     assert dst_dir.exists()
     # Verify the moved file exists in the new location
     assert (dst_dir / "file.txt").exists()
+
 
 def test_copy_directory(tmp_path):
     src_dir = tmp_path / "copy_src"

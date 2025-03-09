@@ -9,8 +9,10 @@ Each method is documented with its purpose, parameters, and return values.
 
 import os
 import shutil
+
 from common.logging import log_debug, log_error
 from directory_utils import DirectoryUtils  # Importing the directory utilities
+
 
 class FileUtils:
     @staticmethod
@@ -33,7 +35,9 @@ class FileUtils:
         return exists
 
     @staticmethod
-    def write_file(file_path: str, content: str, mode: str = "w", encoding: str = "utf-8") -> bool:
+    def write_file(
+        file_path: str, content: str, mode: str = "w", encoding: str = "utf-8"
+    ) -> bool:
         """
         Write the given content to a file.
 
