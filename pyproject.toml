@@ -21,7 +21,10 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent"
 ]
-dependencies = []
+dependencies = [
+  "pyyaml",
+  "click"
+]
 
 [project.urls]
 Homepage = "https://github.com/roelkist/darca-file-utils"
@@ -38,3 +41,15 @@ addopts = "--strict-markers"
 testpaths = [
   "tests"
 ]
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+pytest-cov = "^4.0"
+flake8 = "^6.0"
+black = "^23.3"
+mypy = "^1.0"
+pre-commit = "^3.0"
+isort = "^5.12"
+bandit = "^1.7"
+safety = "^2.3"
+pip-audit = "^1.1"
