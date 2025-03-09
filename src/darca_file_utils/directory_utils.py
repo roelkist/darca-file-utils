@@ -10,7 +10,8 @@ Each method is documented with its purpose, parameters, and return values.
 import os
 import shutil
 
-from common.logging import log_debug, log_error
+from common.logging import log_debug
+from common.logging import log_error
 
 
 class DirectoryUtils:

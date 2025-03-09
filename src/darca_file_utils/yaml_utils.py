@@ -7,7 +7,8 @@ Each method is documented with its purpose, parameters, and return values.
 """
 
 import yaml
-from common.logging import log_debug, log_error
+from common.logging import log_debug
+from common.logging import log_error
 from file_utils import FileUtils  # Reusing file operations from FileUtils
 
 
