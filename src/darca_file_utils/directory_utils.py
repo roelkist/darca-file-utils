@@ -163,8 +163,9 @@ class DirectoryUtils:
             log_debug(f"Renamed directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            log_error(f"Error renaming directory from '{src}' "
-                      f"to '{dst}': {e}")
+            log_error(
+                f"Error renaming directory from '{src}' " f"to '{dst}': {e}"
+            )
             return False
 
     @staticmethod
@@ -228,6 +229,7 @@ class DirectoryUtils:
             log_debug(f"Copied directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            log_error(f"Error copying directory from '{src}' to "
-                      f"'{dst}': {e}")
+            log_error(
+                f"Error copying directory from '{src}' to " f"'{dst}': {e}"
+            )
             return False
