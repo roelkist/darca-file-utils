@@ -4,9 +4,9 @@ repos:
   hooks:
   - id: check-added-large-files
   - id: end-of-file-fixer
-    files: 'repository_service_tuf/'
+    files: 'src/darca_file_utils/'
   - id: trailing-whitespace
-    files: 'repository_service_tuf/'
+    files: 'src/darca_file_utils/'
   - id: check-yaml
     files: '.github/'
 - repo: https://github.com/pycqa/flake8
@@ -28,7 +28,7 @@ repos:
   rev: '1.8.3'
   hooks:
   - id: bandit
-    args: ["-r", "src/darca_file_utils"]
+    args: ["-r", "src/darca_file_utils/"]
     exclude: tests
 - repo: local
   hooks:
