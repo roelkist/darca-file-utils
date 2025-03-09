@@ -15,9 +15,5 @@ lint:
 test:
 	tox -r
 
-# Security checks using bandit, safety, and pip-audit via tox
-security:
-	tox -e security
-
 # Run all checks before pushing code (format, lint, test, security)
 check: format lint test security
