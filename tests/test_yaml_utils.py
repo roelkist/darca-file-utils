@@ -2,8 +2,9 @@ import os
 
 import pytest
 from file_utils import FileUtils  # For file reading/writing used by YamlUtils
-from yaml_utils import \
-    YamlUtils  # Ensure this module is available on PYTHONPATH
+from yaml_utils import (  # Ensure this module is available on PYTHONPATH
+    YamlUtils,
+)
 
 
 def test_write_and_load_yaml_file(tmp_path):

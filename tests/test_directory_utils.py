@@ -1,8 +1,9 @@
 import os
 
 import pytest
-from directory_utils import \
-    DirectoryUtils  # Ensure this module is available on PYTHONPATH
+from directory_utils import (  # Ensure this module is available on PYTHONPATH
+    DirectoryUtils,
+)
 
 
 def test_directory_exist(tmp_path):

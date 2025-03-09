@@ -7,8 +7,7 @@ Each method is documented with its purpose, parameters, and return values.
 """
 
 import yaml
-from common.logging import log_debug
-from common.logging import log_error
+from common.logging import log_debug, log_error
 from file_utils import FileUtils  # Reusing file operations from FileUtils
 
 
@@ -34,7 +33,9 @@ class YamlUtils:
         """
         content = FileUtils.read_file(file_path)
         if not content:
-            log_error(f"YAML file '{file_path}' is empty or could not be read.")
+            log_error(
+                f"YAML file '{file_path}' is empty or could not be read."
+            )
             return {}
         try:
             data = yaml.safe_load(content)
@@ -66,13 +67,19 @@ class YamlUtils:
         """
         try:
             yaml_content = yaml.safe_dump(data, default_flow_style=False)
-            log_debug(f"Serialized data to YAML format for file '{file_path}'.")
+            log_debug(
+                f"Serialized data to YAML format for file '{file_path}'."
+            )
         except Exception as e:
-            log_error(f"Error serializing data to YAML for file '{file_path}': {e}")
+            log_error(
+                f"Error serializing data to YAML for file '{file_path}': {e}"
+            )
             return False
 
         if FileUtils.write_file(file_path, yaml_content):
-            log_debug(f"Written YAML content to file '{file_path}' successfully.")
+            log_debug(
+                f"Written YAML content to file '{file_path}' successfully."
+            )
             return True
         else:
             log_error(f"Failed to write YAML content to file '{file_path}'.")

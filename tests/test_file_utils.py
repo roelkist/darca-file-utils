@@ -68,4 +68,6 @@ def test_copy_file(tmp_path):
     assert FileUtils.file_exist(str(src_file))
     assert FileUtils.file_exist(str(dst_file))
     # Verify both files have the same content
-    assert FileUtils.read_file(str(src_file)) == FileUtils.read_file(str(dst_file))
+    assert FileUtils.read_file(str(src_file)) == FileUtils.read_file(
+        str(dst_file)
+    )

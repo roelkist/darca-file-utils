@@ -10,8 +10,7 @@ Each method is documented with its purpose, parameters, and return values.
 import os
 import shutil
 
-from common.logging import log_debug
-from common.logging import log_error
+from common.logging import log_debug, log_error
 from directory_utils import DirectoryUtils  # Importing the directory utilities
 
 
@@ -57,7 +56,9 @@ class FileUtils:
         """
         directory = os.path.dirname(file_path)
         if directory and not DirectoryUtils.directory_exist(directory):
-            log_error(f"Directory does not exist for file: {directory}, creating it.")
+            log_error(
+                f"Directory does not exist for file: {directory}, creating it."
+            )
             DirectoryUtils.create_directory(directory)
         try:
             with open(file_path, mode, encoding=encoding) as f:
@@ -69,7 +70,9 @@ class FileUtils:
             return False
 
     @staticmethod
-    def read_file(file_path: str, mode: str = "r", encoding: str = "utf-8") -> str:
+    def read_file(
+        file_path: str, mode: str = "r", encoding: str = "utf-8"
+    ) -> str:
         """
         Read and return the content of the specified file.
 
