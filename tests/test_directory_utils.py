@@ -1,6 +1,6 @@
 import os
 
-from directory_utils import (  # Ensure this module is available on PYTHONPATH
+from darca_file_utils.directory_utils import (  # Ensure this module is available on PYTHONPATH
     DirectoryUtils,
 )
 

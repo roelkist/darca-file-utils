@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "darca-file-utility"
+name = "darca-file-utils"
 version = "0.1.0"
 description = "Logging facility for reuse along projects."
 authors = ["Roel Kist <roel.kist@gmail.com>"]
