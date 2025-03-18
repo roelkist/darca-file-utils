@@ -1,55 +1,42 @@
-[build-system]
-requires = [
-    "setuptools>=61.0",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "darca-file-utils"
+[tool.poetry]
+name = "darca-log-facility"
 version = "0.1.0"
-description = "A utility package for file, directory and YAML operations."
-readme = "README.md"
-requires-python = ">=3.7"
-license = { file = "LICENSE" }
-authors = [
-  { name = "roelkist", email = "roel.kist@example.com" }
-]
-keywords = ["file", "directory", "yaml", "utilities"]
-classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent"
-]
-dependencies = [
-  "pyyaml",
-  "click"
-]
+description = "Logging facility for reuse along projects."
+authors = ["Roel Kist <roel.kist@gmail.com>"]
+license = "LICENSE"
+readme = "README.rst"
 
-[project.urls]
-Homepage = "https://github.com/roelkist/darca-file-utils"
-Repository = "https://github.com/roelkist/darca-file-utils"
-Documentation = "https://github.com/roelkist/darca-file-utils/docs"
+[tool.poetry.dependencies]
+python = "^3.12"
+colorlog = "^6.9.0"
 
-[tool.setuptools.packages.find]
-where = ["."]
-exclude = ["tests"]
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "--strict-markers"
-testpaths = [
-  "tests"
-]
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-cov = "^6.0.0"
+pytest-xdist = "^3.6.1"
+flake8 = "^7.1.2"
+black = "^25.1.0"
+isort = "^6.0.1"
+bandit = "^1.8.3"
+mypy = "^1.15.0"
+mypy-extensions = "^1.0.0"
+pre-commit = "^4.1.0"
+coverage-badge = "^1.1.2"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.0"
-pytest-cov = "^4.0"
-flake8 = "^6.0"
-black = "^23.3"
-mypy = "^1.0"
-pre-commit = "^3.0"
-isort = "^5.12"
-bandit = "^1.7"
-safety = "^2.3"
-pip-audit = "^1.1"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^8.2.3"
+sphinx-rtd-theme = "^3.0.2"
+sphinxcontrib-applehelp = "^2.0.0"
+sphinxcontrib-devhelp = "^2.0.0"
+sphinxcontrib-htmlhelp = "^2.1.0"
+sphinxcontrib-jsmath = "^1.0.1"
+sphinxcontrib-qthelp = "^2.0.0"
+sphinxcontrib-serializinghtml = "^2.0.0"
+sphinxcontrib-plantuml = "^0.30"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
