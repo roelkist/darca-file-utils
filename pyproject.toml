@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "darca-log-facility"
+name = "darca-file-utility"
 version = "0.1.0"
 description = "Logging facility for reuse along projects."
 authors = ["Roel Kist <roel.kist@gmail.com>"]
@@ -8,7 +8,7 @@ readme = "README.rst"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-colorlog = "^6.9.0"
+pyyaml = "^6.0.2"
 
 
 [tool.poetry.group.dev.dependencies]
