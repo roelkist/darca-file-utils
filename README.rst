@@ -1,73 +1,152 @@
-Darca File Utils
-================
+========================================
+Darca File Utilities
+========================================
 
-Darca File Utils is a Python package that provides a comprehensive suite of utilities for managing
-files, directories, and YAML configurations. It is designed to be modular, easy to integrate, and
-suitable for both simple scripting and complex application development.
+A modular Python utility library for **file and directory operations** 
+with support for **YAML file management**. This project includes structured 
+logging and follows best practices for Python development.
 
-Features
---------
+----------------------------------------
+📦 Features
+----------------------------------------
 
-- **Directory Operations:** Check existence, create, list, remove, rename, move, and copy directories.
-- **File Operations:** Check existence, read, write, remove, rename, move, and copy files.
-- **YAML Operations:** Load from and write to YAML files with robust error handling.
+- **Directory Operations**
+  - Create, list, rename, move, and delete directories.
+- **File Operations**
+  - Read, write, copy, rename, move, and delete files.
+- **YAML Utilities**
+  - Read and write YAML files.
+- **Structured Logging**
+  - Uses `darca-log-facility` for centralized logging.
+- **Automated Testing**
+  - Uses `pytest` and `pytest-cov` for test coverage.
+- **Code Formatting**
+  - Uses `black` and `isort` for consistent formatting.
 
-License
--------
+----------------------------------------
+🚀 Installation
+----------------------------------------
 
-This project is licensed under the MIT License. See the ``LICENSE`` file for details.
+Ensure you have **Python 3.12+** installed.
 
-Project Home
-------------
+Clone the repository:
+```bash
+git clone https://github.com/YOUR_USERNAME/darca-file-utils.git
+cd darca-file-utils
+```
 
-- GitHub Repository: https://github.com/roelkist/darca-file-utils
+### 🛥 **Using Makefile**
+To set up everything:
+```bash
+make install
+```
 
-Installation
-------------
+Alternatively, install dependencies manually:
+```bash
+python3 -m venv /tmp/darca-log-venv
+source /tmp/darca-log-venv/bin/activate
+poetry install
+```
 
-Install the runtime dependencies using:
+----------------------------------------
+🛠 Usage
+----------------------------------------
 
-.. code-block:: bash
+### 📂 **Directory Operations**
+```python
+from darca_file_utils.directory_utils import DirectoryUtils
 
-   pip install -r requirements.txt
+# Create a directory
+DirectoryUtils.create_directory("my_folder")
 
-For development (including testing, linting, and documentation), install additional requirements:
+# List directory contents
+print(DirectoryUtils.list_directory("my_folder"))
+```
 
-.. code-block:: bash
+### 📄 **File Operations**
+```python
+from darca_file_utils.file_utils import FileUtils
 
-   pip install -r requirements-dev.txt
+# Write to a file
+FileUtils.write_file("example.txt", "Hello, world!")
 
-Usage
------
+# Read the file
+content = FileUtils.read_file("example.txt")
+print(content)
+```
 
-Import the modules into your project as needed:
+### 💑 **YAML Operations**
+```python
+from darca_file_utils.yaml_utils import YamlUtils
 
-.. code-block:: python
+# Save a dictionary to a YAML file
+YamlUtils.write_yaml_file("config.yaml", {"key": "value"})
 
-   from directory_utils import DirectoryUtils
-   from file_utils import FileUtils
-   from yaml_utils import YamlUtils
+# Load YAML content
+config = YamlUtils.load_yaml_file("config.yaml")
+print(config)
+```
 
-For detailed examples, please refer to the documentation files under the ``docs/`` directory,
-including the API Reference and Usage Guide.
+----------------------------------------
+🔍 Running Tests
+----------------------------------------
 
-Development
------------
+To run all tests with **pytest**, including coverage reports:
+```bash
+make test
+```
 
-- **Testing:** Run unit tests using ``pytest`` or via Tox.
-- **Linting & Formatting:** Code style is enforced with Flake8 and Black.
-- **Documentation:** Documentation can be generated using Sphinx by running:
-  
-  .. code-block:: bash
+This will:
+- Run all test cases in the `tests/` folder.
+- Generate a coverage report in **HTML, JSON, and terminal**.
 
-     tox -e docs
+----------------------------------------
+🛠 Development
+----------------------------------------
 
-Contributing
-------------
+### 🎨 **Formatting Code**
+To automatically format the code:
+```bash
+make format
+```
 
-Contributions are welcome. Please see the CONTRIBUTING.rst file for more information.
+### 🛡 **Pre-Commit Checks**
+Run all required checks before committing:
+```bash
+make check
+```
 
-Maintainers
------------
+### 📚 **Building Documentation**
+To generate documentation using **Sphinx**:
+```bash
+make docs
+```
+Documentation will be available in `docs/build/html/`.
 
-For details on project maintainers, refer to the MAINTAINERS.rst file.
+----------------------------------------
+🤝 Contributing
+----------------------------------------
+
+We welcome contributions to improve the project!
+- If you find a bug or want to request a feature, create an **issue**.
+- To contribute code, create a **pull request** with a clear description of the changes.
+- Ensure your code passes all checks by running:
+  ```bash
+  make check
+  ```
+
+----------------------------------------
+🛢 Cleaning Up
+----------------------------------------
+
+To remove the virtual environment and Poetry cache:
+```bash
+make clean
+```
+
+----------------------------------------
+📜 License
+----------------------------------------
+
+This project is licensed under the **MIT License**.
+
