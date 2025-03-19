@@ -1,17 +1,37 @@
 repos:
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
-    hooks:
-      - id: black
-        language_version: python3.8
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v5.0.0
+  hooks:
+  - id: check-added-large-files
+  - id: end-of-file-fixer
+    files: 'src/darca_log_facility/'
+  - id: trailing-whitespace
+    files: 'src/darca_log_facility/'
+  - id: check-yaml
+    files: '.github/'
 
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
+- repo: https://github.com/pycqa/flake8
+  rev: '7.1.2'
+  hooks:
+  - id: flake8
+    args: ["--max-line-length=79"]
+    exclude: docs
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
+- repo: https://github.com/PyCQA/isort
+  rev: '6.0.1'
+  hooks:
+  - id: isort
+    args: [-l79, --profile, black, --check, --diff]
+
+- repo: https://github.com/psf/black
+  rev: '25.1.0'
+  hooks:
+  - id: black
+    args: [-l79, --check, --diff, .]
+
+- repo: https://github.com/PyCQA/bandit
+  rev: '1.8.3'
+  hooks:
+  - id: bandit
+    args: ["-r", "src/darca_log_facility/"]
+    exclude: tests

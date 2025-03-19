@@ -1,8 +1,7 @@
-import os
-import shutil
-import pytest
+from darca_file_utils.file_utils import (
+    FileUtils,
+)
 
-from file_utils import FileUtils  # Ensure the project root is on PYTHONPATH
 
 def test_file_exist(tmp_path):
     # Create a temporary file and verify its existence
@@ -14,6 +13,7 @@ def test_file_exist(tmp_path):
     non_exist_path = tmp_path / "nonexist.txt"
     assert FileUtils.file_exist(str(non_exist_path)) is False
 
+
 def test_write_and_read_file(tmp_path):
     file_path = tmp_path / "hello.txt"
     content = "Hello, testing!"
@@ -22,6 +22,7 @@ def test_write_and_read_file(tmp_path):
     # Read file and verify content
     read_content = FileUtils.read_file(str(file_path))
     assert read_content == content
+
 
 def test_remove_file(tmp_path):
     file_path = tmp_path / "remove_me.txt"
@@ -33,6 +34,7 @@ def test_remove_file(tmp_path):
     # Confirm removal
     assert FileUtils.file_exist(str(file_path)) is False
 
+
 def test_rename_file(tmp_path):
     src_file = tmp_path / "original.txt"
     dst_file = tmp_path / "renamed.txt"
@@ -41,6 +43,7 @@ def test_rename_file(tmp_path):
     assert FileUtils.rename_file(str(src_file), str(dst_file)) is True
     assert not FileUtils.file_exist(str(src_file))
     assert FileUtils.file_exist(str(dst_file))
+
 
 def test_move_file(tmp_path):
     src_file = tmp_path / "move_me.txt"
@@ -53,6 +56,7 @@ def test_move_file(tmp_path):
     assert not FileUtils.file_exist(str(src_file))
     assert FileUtils.file_exist(str(dst_file))
 
+
 def test_copy_file(tmp_path):
     src_file = tmp_path / "copy_me.txt"
     dst_file = tmp_path / "copy_me_copy.txt"
@@ -62,4 +66,6 @@ def test_copy_file(tmp_path):
     assert FileUtils.file_exist(str(src_file))
     assert FileUtils.file_exist(str(dst_file))
     # Verify both files have the same content
-    assert FileUtils.read_file(str(src_file)) == FileUtils.read_file(str(dst_file))
+    assert FileUtils.read_file(str(src_file)) == FileUtils.read_file(
+        str(dst_file)
+    )
