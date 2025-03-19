@@ -10,7 +10,10 @@ Each method is documented with its purpose, parameters, and return values.
 import os
 import shutil
 
-from common.logging import log_debug, log_error
+from darca_log_facility.logger import DarcaLogger
+
+# Initialize the logger
+logger = DarcaLogger(name="directory_utils").get_logger()
 
 
 class DirectoryUtils:
@@ -24,13 +27,9 @@ class DirectoryUtils:
 
         Returns:
             bool: True if the directory exists, False otherwise.
-
-        Example:
-            >>> DirectoryUtils.directory_exist("/tmp")
-            True
         """
         exists = os.path.isdir(path)
-        log_debug(f"Checked directory existence for '{path}': {exists}")
+        logger.debug(f"Checked directory existence for '{path}': {exists}")
         return exists
 
     @staticmethod
@@ -43,21 +42,17 @@ class DirectoryUtils:
 
         Returns:
             bool: True if the directory was created or already exists,
-              False otherwise.
-
-        Example:
-            >>> DirectoryUtils.create_directory("/tmp/new_folder")
-            True
+                  False otherwise.
         """
         if DirectoryUtils.directory_exist(path):
-            log_debug(f"Directory already exists: {path}")
+            logger.debug(f"Directory already exists: {path}")
             return True
         try:
             os.makedirs(path)
-            log_debug(f"Directory created: {path}")
+            logger.debug(f"Directory created: {path}")
             return True
         except Exception as e:
-            log_error(f"Error creating directory '{path}': {e}")
+            logger.error(f"Error creating directory '{path}': {e}")
             return False
 
     @staticmethod
@@ -68,43 +63,40 @@ class DirectoryUtils:
         Args:
             path (str): The directory path to list.
             recursive (bool, optional): If True, returns all file paths
-            recursively (relative to `path`).
-                                        Defaults to False.
+                                        recursively (relative to `path`).
 
         Returns:
             list: If recursive is False, returns a list of entries
-                    (files and directories) directly within `path`.
+                  (files and directories) directly within `path`.
                   If recursive is True, returns a list of file paths
-                    (relative to `path`) for all files found recursively.
+                  (relative to `path`) for all files found recursively.
                   Returns an empty list if the directory does not exist
-                    or an error occurs.
-
-        Example:
-            >>> DirectoryUtils.list_directory("/tmp", recursive=True)
-            ['subfolder/file1.txt', 'subfolder/file2.txt', 'file3.txt']
+                  or an error occurs.
         """
         if not DirectoryUtils.directory_exist(path):
-            log_error(f"Directory does not exist: {path}")
+            logger.error(f"Directory does not exist: {path}")
             return []
+
         try:
             if not recursive:
                 contents = os.listdir(path)
-                log_debug(f"Directory '{path}' contents: {contents}")
+                logger.debug(f"Directory '{path}' contents: {contents}")
                 return contents
-            else:
-                collected_files = []
-                for root, _, files in os.walk(path):
-                    for file in files:
-                        full_path = os.path.join(root, file)
-                        relative_path = os.path.relpath(full_path, path)
-                        collected_files.append(relative_path)
-                log_debug(
-                    f"Recursively collected file paths in "
-                    f"'{path}': {collected_files}"
-                )
-                return collected_files
+
+            collected_files = []
+            for root, _, files in os.walk(path):
+                for file in files:
+                    full_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(full_path, path)
+                    collected_files.append(relative_path)
+            logger.debug(
+                f"Recursively collected files in '{path}': "
+                f"{collected_files}"
+            )
+            return collected_files
+
         except Exception as e:
-            log_error(f"Error listing directory '{path}': {e}")
+            logger.error(f"Error listing directory '{path}': {e}")
             return []
 
     @staticmethod
@@ -117,21 +109,17 @@ class DirectoryUtils:
 
         Returns:
             bool: True if the directory was removed successfully,
-                    False otherwise.
-
-        Example:
-            >>> DirectoryUtils.remove_directory("/tmp/old_folder")
-            True
+                  False otherwise.
         """
         if not DirectoryUtils.directory_exist(path):
-            log_error(f"Directory does not exist: {path}")
+            logger.error(f"Directory does not exist: {path}")
             return False
         try:
             shutil.rmtree(path)
-            log_debug(f"Removed directory: {path}")
+            logger.debug(f"Removed directory: {path}")
             return True
         except Exception as e:
-            log_error(f"Error removing directory '{path}': {e}")
+            logger.error(f"Error removing directory '{path}': {e}")
             return False
 
     @staticmethod
@@ -145,26 +133,21 @@ class DirectoryUtils:
 
         Returns:
             bool: True if the directory was renamed successfully,
-                    False otherwise.
-
-        Example:
-            >>> DirectoryUtils.rename_directory("/tmp/old_name",
-                                                "/tmp/new_name")
-            True
+                  False otherwise.
         """
         if not DirectoryUtils.directory_exist(src):
-            log_error(f"Source directory does not exist: {src}")
+            logger.error(f"Source directory does not exist: {src}")
             return False
         if DirectoryUtils.directory_exist(dst):
-            log_error(f"Destination directory already exists: {dst}")
+            logger.error(f"Destination directory already exists: {dst}")
             return False
         try:
             os.rename(src, dst)
-            log_debug(f"Renamed directory from '{src}' to '{dst}'")
+            logger.debug(f"Renamed directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            log_error(
-                f"Error renaming directory from '{src}' " f"to '{dst}': {e}"
+            logger.error(
+                f"Error renaming directory from '{src}' to '{dst}': {e}"
             )
             return False
 
@@ -179,21 +162,19 @@ class DirectoryUtils:
 
         Returns:
             bool: True if the directory was moved successfully,
-                    False otherwise.
-
-        Example:
-            >>> DirectoryUtils.move_directory("/tmp/folder", "/var/folder")
-            True
+                  False otherwise.
         """
         if not DirectoryUtils.directory_exist(src):
-            log_error(f"Source directory does not exist: {src}")
+            logger.error(f"Source directory does not exist: {src}")
             return False
         try:
             shutil.move(src, dst)
-            log_debug(f"Moved directory from '{src}' to '{dst}'")
+            logger.debug(f"Moved directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            log_error(f"Error moving directory from '{src}' to '{dst}': {e}")
+            logger.error(
+                f"Error moving directory from '{src}' to '{dst}': {e}"
+            )
             return False
 
     @staticmethod
@@ -202,8 +183,8 @@ class DirectoryUtils:
         Recursively copy a directory from the source to the destination.
 
         Note:
-            If the destination directory already exists, this function will
-            not proceed.
+            If the destination directory already exists, this function
+            will not proceed.
 
         Args:
             src (str): The source directory path.
@@ -211,25 +192,20 @@ class DirectoryUtils:
 
         Returns:
             bool: True if the directory was copied successfully,
-                     False otherwise.
-
-        Example:
-            >>> DirectoryUtils.copy_directory("/tmp/source_folder",
-                                            "/tmp/destination_folder")
-            True
+                  False otherwise.
         """
         if not DirectoryUtils.directory_exist(src):
-            log_error(f"Source directory does not exist: {src}")
+            logger.error(f"Source directory does not exist: {src}")
             return False
         if DirectoryUtils.directory_exist(dst):
-            log_error(f"Destination directory already exists: {dst}")
+            logger.error(f"Destination directory already exists: {dst}")
             return False
         try:
             shutil.copytree(src, dst)
-            log_debug(f"Copied directory from '{src}' to '{dst}'")
+            logger.debug(f"Copied directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            log_error(
-                f"Error copying directory from '{src}' to " f"'{dst}': {e}"
+            logger.error(
+                f"Error copying directory from '{src}' to '{dst}': {e}"
             )
             return False

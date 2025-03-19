@@ -1,4 +1,4 @@
-from darca_file_utils.yaml_utils import (  # Ensure this module is available on PYTHONPATH
+from darca_file_utils.yaml_utils import (
     YamlUtils,
 )
 

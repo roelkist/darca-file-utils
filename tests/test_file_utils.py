@@ -1,4 +1,6 @@
-from darca_file_utils.file_utils import FileUtils  # Ensure the project root is on PYTHONPATH
+from darca_file_utils.file_utils import (
+    FileUtils,
+)
 
 
 def test_file_exist(tmp_path):
