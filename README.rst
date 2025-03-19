@@ -6,9 +6,6 @@ A modular Python utility library for **file and directory operations**
 with support for **YAML file management**. This project includes structured 
 logging and follows best practices for Python development.
 
-.. image:: coverage.svg
-   :alt: Code Coverage Badge
-
 ----------------------------------------
 Features
 ----------------------------------------
