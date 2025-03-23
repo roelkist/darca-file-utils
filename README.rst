@@ -1,163 +1,92 @@
-========================================
-Darca File Utilities
-========================================
+==================================================
+darca-file-utils - Robust File & Directory Utils
+==================================================
 
-A modular Python utility library for **file and directory operations** 
-with support for **YAML file management**. This project includes structured 
-logging and follows best practices for Python development.
+**darca-file-utils** is a Python utility library providing robust, reusable helpers for file and directory manipulation. It includes safe wrappers for common operations like reading, writing, copying, moving, renaming, and deleting files and directories, with rich exception handling and structured logging using the `darca` framework.
 
-----------------------------------------
 Features
-----------------------------------------
+--------
 
-- **Directory Operations**
-  - Create, list, rename, move, and delete directories.
-- **File Operations**
-  - Read, write, copy, rename, move, and delete files.
-- **YAML Utilities**
-  - Read and write YAML files.
-- **Structured Logging**
-  - Uses ``darca-log-facility`` for centralized logging.
-- **Automated Testing**
-  - Uses ``pytest`` and ``pytest-cov`` for test coverage.
-- **Code Formatting**
-  - Uses ``black`` and ``isort`` for consistent formatting.
+- ✅ File utilities: check, read, write, remove, rename, move, and copy
+- 📁 Directory utilities: create, list, move, rename, remove, and copy
+- 🚨 Structured error handling via `DarcaException`
+- 🧪 100% test coverage with `pytest`, `coverage`, and parallel test execution
+- 🧹 Integrated pre-commit hooks for consistent code quality
+- 📦 Isolated virtual environment and Poetry setup
 
-----------------------------------------
 Installation
-----------------------------------------
+------------
 
-Ensure you have **Python 3.12+** installed.
-
-Clone the repository:
-
-.. code-block:: bash
-
-    git clone https://github.com/YOUR_USERNAME/darca-file-utils.git
-    cd darca-file-utils
-
-Using Makefile:
+Clone the repository and install dependencies using the Makefile:
 
 .. code-block:: bash
 
     make install
 
-Alternatively, install dependencies manually:
+This will set up Poetry in an isolated virtual environment at ``/tmp/darca-log-venv``.
 
-.. code-block:: bash
-
-    python3 -m venv /tmp/darca-log-venv
-    source /tmp/darca-log-venv/bin/activate
-    poetry install
-
-----------------------------------------
-Usage
-----------------------------------------
-
-Directory Operations:
-
-.. code-block:: python
-
-    from darca_file_utils.directory_utils import DirectoryUtils
-
-    # Create a directory
-    DirectoryUtils.create_directory("my_folder")
-
-    # List directory contents
-    print(DirectoryUtils.list_directory("my_folder"))
-
-File Operations:
+Quickstart
+----------
 
 .. code-block:: python
 
     from darca_file_utils.file_utils import FileUtils
+    from darca_file_utils.directory_utils import DirectoryUtils
 
-    # Write to a file
-    FileUtils.write_file("example.txt", "Hello, world!")
+    FileUtils.write_file("example.txt", "Hello world!")
+    print(FileUtils.read_file("example.txt"))
 
-    # Read the file
-    content = FileUtils.read_file("example.txt")
-    print(content)
+    DirectoryUtils.create_directory("test_folder")
 
-YAML Operations:
-
-.. code-block:: python
-
-    from darca_file_utils.yaml_utils import YamlUtils
-
-    # Save a dictionary to a YAML file
-    YamlUtils.write_yaml_file("config.yaml", {"key": "value"})
-
-    # Load YAML content
-    config = YamlUtils.load_yaml_file("config.yaml")
-    print(config)
-
-----------------------------------------
 Running Tests
-----------------------------------------
-
-To run all tests with ``pytest``, including coverage reports:
+-------------
 
 .. code-block:: bash
 
     make test
 
-This will:
-- Run all test cases in the ``tests/`` folder.
-- Generate a coverage report in **HTML, JSON, and terminal**.
+- Generates full coverage reports in terminal, HTML, and JSON.
+- Creates a coverage badge (``coverage.svg``) saved to ``docs/source/_static``.
 
-----------------------------------------
-Development
-----------------------------------------
+Check Everything
+----------------
 
-Formatting Code:
-
-.. code-block:: bash
-
-    make format
-
-Pre-Commit Checks:
+Run all checks before committing:
 
 .. code-block:: bash
 
     make check
 
-Building Documentation:
+This runs formatting, pre-commit, and tests in sequence.
+
+Documentation
+-------------
+
+To build the Sphinx documentation locally:
 
 .. code-block:: bash
 
     make docs
 
-Documentation will be available in ``docs/build/html/``.
+Output is generated in ``docs/build/html``.
 
-----------------------------------------
-Contributing
-----------------------------------------
+Continuous Integration
+----------------------
 
-We welcome contributions to improve the project!
-
-- If you find a bug or want to request a feature, create an **issue**.
-- To contribute code, create a **pull request** with a clear description 
-  of the changes.
-- Ensure your code passes all checks by running:
+GitHub Actions uses:
 
 .. code-block:: bash
 
-    make check
+    make ci
 
-----------------------------------------
-Cleaning Up
-----------------------------------------
+This target is optimized for CI/CD environments and runs pre-commit, tests, and docs builds.
 
-To remove the virtual environment and Poetry cache:
-
-.. code-block:: bash
-
-    make clean
-
-----------------------------------------
 License
-----------------------------------------
+-------
 
-This project is licensed under the **MIT License**.
+MIT License. See LICENSE for details.
 
+Author
+------
+
+Roel Kist

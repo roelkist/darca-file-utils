@@ -362,6 +362,21 @@ coverage = "*"
 setuptools = "*"
 
 [[package]]
+name = "darca-exception"
+version = "0.1.0"
+description = "Exception module for reuse along projects."
+optional = false
+python-versions = "<4.0,>=3.12"
+groups = ["main"]
+files = [
+    {file = "darca_exception-0.1.0-py3-none-any.whl", hash = "sha256:9fb2c4fae92da5397de16ffcaf3253d95d5d7fa458ba9eb1b496e6466bafd7ae"},
+    {file = "darca_exception-0.1.0.tar.gz", hash = "sha256:e72905279efc07a15c2248c4dcb25ab25204520129ce400773a1c94e2d2efd8d"},
+]
+
+[package.dependencies]
+darca-log-facility = ">=0.1.0,<0.2.0"
+
+[[package]]
 name = "darca-log-facility"
 version = "0.1.0"
 description = "Logging facility for reuse along projects."
@@ -1335,4 +1350,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "36fe482a31bc0db6280eda8d05a5642fc458bea8027d7fb18a0a0af960aa196e"
+content-hash = "46a7875990f922f517369bd8d5ae85ae0b63efced741b7525596b6104cc8aa01"

@@ -10,10 +10,27 @@ Each method is documented with its purpose, parameters, and return values.
 import os
 import shutil
 
+from darca_exception.exception import DarcaException
 from darca_log_facility.logger import DarcaLogger
 
 # Initialize the logger
 logger = DarcaLogger(name="directory_utils").get_logger()
+
+
+class DirectoryUtilsException(DarcaException):
+    """
+    Custom exception for directory utility errors.
+    Inherits from DarcaException to provide structured logging,
+    metadata handling, and optional chaining of original exceptions.
+    """
+
+    def __init__(self, message, error_code=None, metadata=None, cause=None):
+        super().__init__(
+            message=message,
+            error_code=error_code or "DIRECTORY_UTILS_ERROR",
+            metadata=metadata,
+            cause=cause,
+        )
 
 
 class DirectoryUtils:
@@ -41,8 +58,10 @@ class DirectoryUtils:
             path (str): The directory path to create.
 
         Returns:
-            bool: True if the directory was created or already exists,
-                  False otherwise.
+            bool: True if the directory was created or already exists.
+
+        Raises:
+            DirectoryUtilsException: If the directory creation fails.
         """
         if DirectoryUtils.directory_exist(path):
             logger.debug(f"Directory already exists: {path}")
@@ -52,8 +71,12 @@ class DirectoryUtils:
             logger.debug(f"Directory created: {path}")
             return True
         except Exception as e:
-            logger.error(f"Error creating directory '{path}': {e}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Failed to create directory: {path}",
+                error_code="DIRECTORY_CREATION_ERROR",
+                metadata={"path": path},
+                cause=e,
+            )
 
     @staticmethod
     def list_directory(path: str, recursive: bool = False) -> list:
@@ -66,16 +89,19 @@ class DirectoryUtils:
                                         recursively (relative to `path`).
 
         Returns:
-            list: If recursive is False, returns a list of entries
-                  (files and directories) directly within `path`.
-                  If recursive is True, returns a list of file paths
-                  (relative to `path`) for all files found recursively.
-                  Returns an empty list if the directory does not exist
-                  or an error occurs.
+            list: List of entries or file paths depending on the `recursive`
+                  flag.
+
+        Raises:
+            DirectoryUtilsException: If the directory does not exist or
+                                     listing fails.
         """
         if not DirectoryUtils.directory_exist(path):
-            logger.error(f"Directory does not exist: {path}")
-            return []
+            raise DirectoryUtilsException(
+                message=f"Directory does not exist: {path}",
+                error_code="DIRECTORY_NOT_FOUND",
+                metadata={"path": path},
+            )
 
         try:
             if not recursive:
@@ -90,14 +116,17 @@ class DirectoryUtils:
                     relative_path = os.path.relpath(full_path, path)
                     collected_files.append(relative_path)
             logger.debug(
-                f"Recursively collected files in '{path}': "
-                f"{collected_files}"
+                f"Recursively collected files in '{path}': {collected_files}"
             )
             return collected_files
 
         except Exception as e:
-            logger.error(f"Error listing directory '{path}': {e}")
-            return []
+            raise DirectoryUtilsException(
+                message=f"Failed to list directory: {path}",
+                error_code="DIRECTORY_LISTING_ERROR",
+                metadata={"path": path, "recursive": recursive},
+                cause=e,
+            )
 
     @staticmethod
     def remove_directory(path: str) -> bool:
@@ -108,19 +137,30 @@ class DirectoryUtils:
             path (str): The directory path to remove.
 
         Returns:
-            bool: True if the directory was removed successfully,
-                  False otherwise.
+            bool: True if the directory was removed successfully.
+
+        Raises:
+            DirectoryUtilsException: If the directory does not exist
+                                     or removal fails.
         """
         if not DirectoryUtils.directory_exist(path):
-            logger.error(f"Directory does not exist: {path}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Directory does not exist: {path}",
+                error_code="DIRECTORY_NOT_FOUND",
+                metadata={"path": path},
+            )
+
         try:
             shutil.rmtree(path)
             logger.debug(f"Removed directory: {path}")
             return True
         except Exception as e:
-            logger.error(f"Error removing directory '{path}': {e}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Failed to remove directory: {path}",
+                error_code="DIRECTORY_REMOVE_ERROR",
+                metadata={"path": path},
+                cause=e,
+            )
 
     @staticmethod
     def rename_directory(src: str, dst: str) -> bool:
@@ -132,24 +172,35 @@ class DirectoryUtils:
             dst (str): The new directory path.
 
         Returns:
-            bool: True if the directory was renamed successfully,
-                  False otherwise.
+            bool: True if the directory was renamed successfully.
+
+        Raises:
+            DirectoryUtilsException: If validation or renaming fails.
         """
         if not DirectoryUtils.directory_exist(src):
-            logger.error(f"Source directory does not exist: {src}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Source directory does not exist: {src}",
+                error_code="DIRECTORY_NOT_FOUND",
+                metadata={"src": src},
+            )
         if DirectoryUtils.directory_exist(dst):
-            logger.error(f"Destination directory already exists: {dst}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Destination directory already exists: {dst}",
+                error_code="DIRECTORY_ALREADY_EXISTS",
+                metadata={"dst": dst},
+            )
+
         try:
             os.rename(src, dst)
             logger.debug(f"Renamed directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            logger.error(
-                f"Error renaming directory from '{src}' to '{dst}': {e}"
+            raise DirectoryUtilsException(
+                message=f"Failed to rename directory from '{src}' to '{dst}'",
+                error_code="DIRECTORY_RENAME_ERROR",
+                metadata={"src": src, "dst": dst},
+                cause=e,
             )
-            return False
 
     @staticmethod
     def move_directory(src: str, dst: str) -> bool:
@@ -161,21 +212,29 @@ class DirectoryUtils:
             dst (str): The destination directory path.
 
         Returns:
-            bool: True if the directory was moved successfully,
-                  False otherwise.
+            bool: True if the directory was moved successfully.
+
+        Raises:
+            DirectoryUtilsException: If the move operation fails.
         """
         if not DirectoryUtils.directory_exist(src):
-            logger.error(f"Source directory does not exist: {src}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Source directory does not exist: {src}",
+                error_code="DIRECTORY_NOT_FOUND",
+                metadata={"src": src},
+            )
+
         try:
             shutil.move(src, dst)
             logger.debug(f"Moved directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            logger.error(
-                f"Error moving directory from '{src}' to '{dst}': {e}"
+            raise DirectoryUtilsException(
+                message=f"Failed to move directory from '{src}' to '{dst}'",
+                error_code="DIRECTORY_MOVE_ERROR",
+                metadata={"src": src, "dst": dst},
+                cause=e,
             )
-            return False
 
     @staticmethod
     def copy_directory(src: str, dst: str) -> bool:
@@ -191,21 +250,32 @@ class DirectoryUtils:
             dst (str): The destination directory path.
 
         Returns:
-            bool: True if the directory was copied successfully,
-                  False otherwise.
+            bool: True if the directory was copied successfully.
+
+        Raises:
+            DirectoryUtilsException: If copy operation fails.
         """
         if not DirectoryUtils.directory_exist(src):
-            logger.error(f"Source directory does not exist: {src}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Source directory does not exist: {src}",
+                error_code="DIRECTORY_NOT_FOUND",
+                metadata={"src": src},
+            )
         if DirectoryUtils.directory_exist(dst):
-            logger.error(f"Destination directory already exists: {dst}")
-            return False
+            raise DirectoryUtilsException(
+                message=f"Destination directory already exists: {dst}",
+                error_code="DIRECTORY_ALREADY_EXISTS",
+                metadata={"dst": dst},
+            )
+
         try:
             shutil.copytree(src, dst)
             logger.debug(f"Copied directory from '{src}' to '{dst}'")
             return True
         except Exception as e:
-            logger.error(
-                f"Error copying directory from '{src}' to '{dst}': {e}"
+            raise DirectoryUtilsException(
+                message=f"Failed to copy directory from '{src}' to '{dst}'",
+                error_code="DIRECTORY_COPY_ERROR",
+                metadata={"src": src, "dst": dst},
+                cause=e,
             )
-            return False
