@@ -1,100 +1,193 @@
 import os
 
+import pytest
+
 from darca_file_utils.directory_utils import (
     DirectoryUtils,
+    DirectoryUtilsException,
 )
 
 
 def test_directory_exist(tmp_path):
-    # Create a directory and check for its existence
-    dir_path = tmp_path / "dir_exist"
-    dir_path.mkdir()
-    assert DirectoryUtils.directory_exist(str(dir_path)) is True
-
-    # Test for a non-existent directory
-    non_exist_dir = tmp_path / "nonexist_dir"
-    assert DirectoryUtils.directory_exist(str(non_exist_dir)) is False
+    path = tmp_path / "exists"
+    path.mkdir()
+    assert DirectoryUtils.directory_exist(str(path))
+    assert not DirectoryUtils.directory_exist(str(tmp_path / "ghost"))
 
 
 def test_create_directory(tmp_path):
-    new_dir = tmp_path / "new_folder"
-    # Ensure directory does not exist initially
-    assert not new_dir.exists()
-    # Create the directory
-    assert DirectoryUtils.create_directory(str(new_dir)) is True
-    assert new_dir.exists()
+    path = tmp_path / "create"
+    assert DirectoryUtils.create_directory(str(path))
+    assert path.exists()
 
 
-def test_list_directory(tmp_path):
-    test_dir = tmp_path / "list_test"
-    test_dir.mkdir()
-    # Create files in the directory
-    (test_dir / "file1.txt").write_text("content1")
-    (test_dir / "file2.txt").write_text("content2")
-    # Create a subdirectory with a file inside
-    sub_dir = test_dir / "subfolder"
-    sub_dir.mkdir()
-    (sub_dir / "file3.txt").write_text("content3")
-
-    # Non-recursive listing should include immediate children
-    contents = DirectoryUtils.list_directory(str(test_dir))
-    assert "file1.txt" in contents
-    assert "file2.txt" in contents
-    assert "subfolder" in contents
-
-    # Recursive listing should return file paths relative to test_dir
-    rec_contents = DirectoryUtils.list_directory(str(test_dir), recursive=True)
-    assert "file1.txt" in rec_contents
-    assert "file2.txt" in rec_contents
-    assert os.path.join("subfolder", "file3.txt") in rec_contents
+def test_create_directory_already_exists(tmp_path):
+    dir_path = tmp_path / "existing"
+    dir_path.mkdir()
+    assert DirectoryUtils.create_directory(str(dir_path)) is True
 
 
-def test_remove_directory(tmp_path):
-    test_dir = tmp_path / "remove_dir"
-    test_dir.mkdir()
-    # Create a file inside the directory
-    (test_dir / "file.txt").write_text("to be removed")
-    # Remove the directory and verify removal
-    assert DirectoryUtils.remove_directory(str(test_dir)) is True
-    assert not test_dir.exists()
+def test_create_directory_failure(monkeypatch, tmp_path):
+    path = tmp_path / "fail"
+
+    monkeypatch.setattr(
+        "os.makedirs", lambda *a, **k: (_ for _ in ()).throw(OSError("fail"))
+    )
+    with pytest.raises(DirectoryUtilsException) as exc:
+        DirectoryUtils.create_directory(str(path))
+    assert "DIRECTORY_CREATION_ERROR" in str(exc.value)
+
+
+def test_list_directory_basic(tmp_path):
+    path = tmp_path / "dir"
+    path.mkdir()
+    (path / "file.txt").write_text("x")
+    (path / "sub").mkdir()
+
+    out = DirectoryUtils.list_directory(str(path))
+    assert "file.txt" in out
+    assert "sub" in out
+
+
+def test_list_directory_recursive(tmp_path):
+    path = tmp_path / "deep"
+    sub = path / "nested"
+    sub.mkdir(parents=True)
+    (sub / "x.txt").write_text("x")
+
+    files = DirectoryUtils.list_directory(str(path), recursive=True)
+    assert os.path.join("nested", "x.txt") in files
+
+
+def test_list_directory_error(monkeypatch, tmp_path):
+    path = tmp_path / "boom"
+    path.mkdir()
+
+    monkeypatch.setattr(
+        "os.listdir", lambda *a, **k: (_ for _ in ()).throw(OSError("fail"))
+    )
+    with pytest.raises(DirectoryUtilsException) as exc:
+        DirectoryUtils.list_directory(str(path))
+    assert "DIRECTORY_LISTING_ERROR" in str(exc.value)
+
+
+def test_list_directory_missing(tmp_path):
+    with pytest.raises(DirectoryUtilsException) as exc:
+        DirectoryUtils.list_directory(str(tmp_path / "ghost"))
+    assert "DIRECTORY_NOT_FOUND" in str(exc.value)
+
+
+def test_remove_directory_success(tmp_path):
+    path = tmp_path / "toremove"
+    path.mkdir()
+    assert DirectoryUtils.remove_directory(str(path))
+    assert not path.exists()
+
+
+def test_remove_directory_missing(tmp_path):
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.remove_directory(str(tmp_path / "ghost"))
+
+
+def test_remove_directory_failure(monkeypatch, tmp_path):
+    path = tmp_path / "locked"
+    path.mkdir()
+    monkeypatch.setattr(
+        "shutil.rmtree", lambda *a, **k: (_ for _ in ()).throw(OSError("fail"))
+    )
+    with pytest.raises(DirectoryUtilsException) as exc:
+        DirectoryUtils.remove_directory(str(path))
+    assert "DIRECTORY_REMOVE_ERROR" in str(exc.value)
 
 
 def test_rename_directory(tmp_path):
-    src_dir = tmp_path / "old_name"
-    dst_dir = tmp_path / "new_name"
-    src_dir.mkdir()
-    # Rename the directory
-    assert DirectoryUtils.rename_directory(str(src_dir), str(dst_dir)) is True
-    assert not src_dir.exists()
-    assert dst_dir.exists()
+    src = tmp_path / "src"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    assert DirectoryUtils.rename_directory(str(src), str(dst))
+    assert dst.exists()
+
+
+def test_rename_directory_failures(tmp_path):
+    missing = tmp_path / "ghost"
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.rename_directory(str(missing), str(tmp_path / "any"))
+
+    src = tmp_path / "src"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    dst.mkdir()
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.rename_directory(str(src), str(dst))
+
+
+def test_rename_directory_error(monkeypatch, tmp_path):
+    src = tmp_path / "from"
+    dst = tmp_path / "to"
+    src.mkdir()
+    monkeypatch.setattr(
+        "os.rename", lambda *a, **k: (_ for _ in ()).throw(OSError("fail"))
+    )
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.rename_directory(str(src), str(dst))
 
 
 def test_move_directory(tmp_path):
-    src_dir = tmp_path / "move_src"
-    dst_dir = tmp_path / "move_dst"
-    src_dir.mkdir()
-    # Create a file in the source directory
-    (src_dir / "file.txt").write_text("moving directory")
-    # Move the directory
-    assert DirectoryUtils.move_directory(str(src_dir), str(dst_dir)) is True
-    assert not src_dir.exists()
-    assert dst_dir.exists()
-    # Verify the moved file exists in the new location
-    assert (dst_dir / "file.txt").exists()
+    src = tmp_path / "src"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    assert DirectoryUtils.move_directory(str(src), str(dst))
+    assert dst.exists()
+
+
+def test_move_directory_missing(tmp_path):
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.move_directory(
+            str(tmp_path / "ghost"), str(tmp_path / "here")
+        )
+
+
+def test_move_directory_error(monkeypatch, tmp_path):
+    src = tmp_path / "dir"
+    dst = tmp_path / "dest"
+    src.mkdir()
+    monkeypatch.setattr(
+        "shutil.move", lambda *a, **k: (_ for _ in ()).throw(OSError("fail"))
+    )
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.move_directory(str(src), str(dst))
 
 
 def test_copy_directory(tmp_path):
-    src_dir = tmp_path / "copy_src"
-    dst_dir = tmp_path / "copy_dst"
-    src_dir.mkdir()
-    # Create files in the source directory
-    (src_dir / "file1.txt").write_text("copy file1")
-    (src_dir / "file2.txt").write_text("copy file2")
-    # Copy the directory
-    assert DirectoryUtils.copy_directory(str(src_dir), str(dst_dir)) is True
-    # Ensure both source and destination exist
-    assert src_dir.exists()
-    assert dst_dir.exists()
-    # Check that files were copied
-    assert (dst_dir / "file1.txt").exists()
-    assert (dst_dir / "file2.txt").exists()
+    src = tmp_path / "src"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    (src / "file.txt").write_text("hi")
+    assert DirectoryUtils.copy_directory(str(src), str(dst))
+    assert (dst / "file.txt").exists()
+
+
+def test_copy_directory_failures(tmp_path):
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.copy_directory(
+            str(tmp_path / "ghost"), str(tmp_path / "dst")
+        )
+
+    src = tmp_path / "src"
+    dst = tmp_path / "dst"
+    src.mkdir()
+    dst.mkdir()
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.copy_directory(str(src), str(dst))
+
+
+def test_copy_directory_error(monkeypatch, tmp_path):
+    src = tmp_path / "source"
+    dst = tmp_path / "target"
+    src.mkdir()
+    monkeypatch.setattr(
+        "shutil.copytree",
+        lambda *a, **k: (_ for _ in ()).throw(OSError("fail")),
+    )
+    with pytest.raises(DirectoryUtilsException):
+        DirectoryUtils.copy_directory(str(src), str(dst))

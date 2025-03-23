@@ -1,73 +1,92 @@
-Darca File Utils
-================
+==================================================
+darca-file-utils - Robust File & Directory Utils
+==================================================
 
-Darca File Utils is a Python package that provides a comprehensive suite of utilities for managing
-files, directories, and YAML configurations. It is designed to be modular, easy to integrate, and
-suitable for both simple scripting and complex application development.
+**darca-file-utils** is a Python utility library providing robust, reusable helpers for file and directory manipulation. It includes safe wrappers for common operations like reading, writing, copying, moving, renaming, and deleting files and directories, with rich exception handling and structured logging using the `darca` framework.
 
 Features
 --------
 
-- **Directory Operations:** Check existence, create, list, remove, rename, move, and copy directories.
-- **File Operations:** Check existence, read, write, remove, rename, move, and copy files.
-- **YAML Operations:** Load from and write to YAML files with robust error handling.
-
-License
--------
-
-This project is licensed under the MIT License. See the ``LICENSE`` file for details.
-
-Project Home
-------------
-
-- GitHub Repository: https://github.com/roelkist/darca-file-utils
+- ✅ File utilities: check, read, write, remove, rename, move, and copy
+- 📁 Directory utilities: create, list, move, rename, remove, and copy
+- 🚨 Structured error handling via `DarcaException`
+- 🧪 100% test coverage with `pytest`, `coverage`, and parallel test execution
+- 🧹 Integrated pre-commit hooks for consistent code quality
+- 📦 Isolated virtual environment and Poetry setup
 
 Installation
 ------------
 
-Install the runtime dependencies using:
+Clone the repository and install dependencies using the Makefile:
 
 .. code-block:: bash
 
-   pip install -r requirements.txt
+    make install
 
-For development (including testing, linting, and documentation), install additional requirements:
+This will set up Poetry in an isolated virtual environment at ``/tmp/darca-log-venv``.
 
-.. code-block:: bash
-
-   pip install -r requirements-dev.txt
-
-Usage
------
-
-Import the modules into your project as needed:
+Quickstart
+----------
 
 .. code-block:: python
 
-   from directory_utils import DirectoryUtils
-   from file_utils import FileUtils
-   from yaml_utils import YamlUtils
+    from darca_file_utils.file_utils import FileUtils
+    from darca_file_utils.directory_utils import DirectoryUtils
 
-For detailed examples, please refer to the documentation files under the ``docs/`` directory,
-including the API Reference and Usage Guide.
+    FileUtils.write_file("example.txt", "Hello world!")
+    print(FileUtils.read_file("example.txt"))
 
-Development
------------
+    DirectoryUtils.create_directory("test_folder")
 
-- **Testing:** Run unit tests using ``pytest`` or via Tox.
-- **Linting & Formatting:** Code style is enforced with Flake8 and Black.
-- **Documentation:** Documentation can be generated using Sphinx by running:
-  
-  .. code-block:: bash
+Running Tests
+-------------
 
-     tox -e docs
+.. code-block:: bash
 
-Contributing
-------------
+    make test
 
-Contributions are welcome. Please see the CONTRIBUTING.rst file for more information.
+- Generates full coverage reports in terminal, HTML, and JSON.
+- Creates a coverage badge (``coverage.svg``) saved to ``docs/source/_static``.
 
-Maintainers
------------
+Check Everything
+----------------
 
-For details on project maintainers, refer to the MAINTAINERS.rst file.
+Run all checks before committing:
+
+.. code-block:: bash
+
+    make check
+
+This runs formatting, pre-commit, and tests in sequence.
+
+Documentation
+-------------
+
+To build the Sphinx documentation locally:
+
+.. code-block:: bash
+
+    make docs
+
+Output is generated in ``docs/build/html``.
+
+Continuous Integration
+----------------------
+
+GitHub Actions uses:
+
+.. code-block:: bash
+
+    make ci
+
+This target is optimized for CI/CD environments and runs pre-commit, tests, and docs builds.
+
+License
+-------
+
+MIT License. See LICENSE for details.
+
+Author
+------
+
+Roel Kist
