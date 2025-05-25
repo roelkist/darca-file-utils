@@ -9,9 +9,12 @@ Each method is documented with its purpose, parameters, and return values.
 
 import os
 import shutil
+import string
+from typing import Union, Optional
 
 from darca_exception.exception import DarcaException
 from darca_log_facility.logger import DarcaLogger
+import pwd
 
 from darca_file_utils.directory_utils import (
     DirectoryUtils,  # Importing directory utilities
@@ -53,68 +56,111 @@ class FileUtils:
         logger.debug(f"Checked file existence for '{path}': {exists}")
         return exists
 
+
     @staticmethod
     def write_file(
-        file_path: str, content: str, mode: str = "w", encoding: str = "utf-8"
+        file_path: str,
+        content: Union[str, bytes],
+        *,
+        binary: bool = False,                      # ← explicit flag
+        permissions: Optional[int] = None,
+        user: Optional[str] = None,
     ) -> bool:
         """
-        Write the given content to a file.
+        Write *content* to *file_path*.
 
-        Args:
-            file_path (str): The path to the file.
-            content (str): The content to be written.
-            mode (str, optional): The file opening mode (default is "w").
-            encoding (str, optional): The file encoding (default is "utf-8").
+        Parameters
+        ----------
+        binary   : bool, default False
+            • False - write as UTF-8 text.  *bytes* will be decoded first.  
+            • True  - write as raw bytes.   *str* will be UTF-8 encoded.
+        permissions : int | None
+            chmod bits (e.g. 0o644) applied after writing.
+        user : str | None
+            Username to chown the file to (requires privilege).
 
-        Returns:
-            bool: True if the file was written successfully.
+        Returns
+        -------
+        bool
+            True on success.
 
-        Raises:
-            FileUtilsException: If the file could not be written.
+        Raises
+        ------
+        FileUtilsException
+            For directory creation, write, chmod, or chown errors.
         """
+        # ---------- ensure parent directory exists --------------------- #
         directory = os.path.dirname(file_path)
         if directory and not DirectoryUtils.directory_exist(directory):
-            logger.warning(
-                f"Directory does not exist for file: {directory}, creating it."
-            )
-            created = DirectoryUtils.create_directory(directory)
-            if not created:
+            logger.info("Directory does not exist for file: %s – creating it.", directory)
+            if not DirectoryUtils.create_directory(directory, permissions=permissions, user=user):
                 raise FileUtilsException(
                     message="Failed to create directory for file writing.",
                     error_code="DIRECTORY_CREATION_FAILED",
                     metadata={"directory": directory},
                 )
 
+        # ---------- normalise content & pick mode ---------------------- #
+        if binary:
+            if isinstance(content, str):
+                content = content.encode("utf-8")
+            mode = "wb"
+        else:
+            if isinstance(content, bytes):
+                content = content.decode("utf-8")
+            mode = "w"
+
         try:
-            with open(file_path, mode, encoding=encoding) as f:
-                f.write(content)
-            logger.debug(f"Wrote content to file: {file_path}")
+            # ---------- actual write ----------------------------------- #
+            with open(file_path, mode) as f:
+                f.write(content)                      # type: ignore[arg-type]
+
+            if permissions is not None:
+                os.chmod(file_path, permissions)
+
+            if user is not None:
+                pw = pwd.getpwnam(user)
+                os.chown(file_path, pw.pw_uid, pw.pw_gid)
+
+            logger.debug("Wrote %s file: %s", "binary" if binary else "text", file_path)
             return True
+
         except Exception as e:
             raise FileUtilsException(
                 message=f"Failed to write to file: {file_path}",
                 error_code="FILE_WRITE_ERROR",
-                metadata={"file_path": file_path, "mode": mode},
+                metadata={
+                    "file_path": file_path,
+                    "binary": binary,
+                },
                 cause=e,
-            )
+            ) from e
 
+    # ───────────────────────────── read_file ─────────────────────────── #
     @staticmethod
     def read_file(
-        file_path: str, mode: str = "r", encoding: str = "utf-8"
-    ) -> str:
+        file_path: str,
+        *,
+        binary: bool = False,                       # ← explicit flag
+    ) -> Union[str, bytes]:
         """
-        Read and return the content of the specified file.
+        Read *file_path*.
 
-        Args:
-            file_path (str): The path to the file.
-            mode (str, optional): The file opening mode (default is "r").
-            encoding (str, optional): The file encoding (default is "utf-8").
+        Parameters
+        ----------
+        binary : bool, default False
+            • False - return UTF-8 text (str)  
+            • True  - return raw bytes
 
-        Returns:
-            str: The content of the file.
+        Returns
+        -------
+        str | bytes
+            File contents in the requested form.
 
-        Raises:
-            FileUtilsException: If the file doesn't exist or cannot be read.
+        Raises
+        ------
+        FileUtilsException
+            If the file does not exist or reading fails.
         """
         if not FileUtils.file_exist(file_path):
             raise FileUtilsException(
@@ -123,18 +169,24 @@ class FileUtils:
                 metadata={"file_path": file_path},
             )
 
+        mode = "rb" if binary else "r"
         try:
-            with open(file_path, mode, encoding=encoding) as f:
-                content = f.read()
-            logger.debug(f"Read content from file: {file_path}")
-            return content
+            with open(file_path, mode, encoding=None if binary else "utf-8") as f:
+                data = f.read()
+
+            logger.debug("Read %s file: %s", "binary" if binary else "text", file_path)
+            return data
+
         except Exception as e:
             raise FileUtilsException(
                 message=f"Failed to read file: {file_path}",
                 error_code="FILE_READ_ERROR",
-                metadata={"file_path": file_path, "mode": mode},
+                metadata={
+                    "file_path": file_path,
+                    "binary": binary,
+                },
                 cause=e,
-            )
+            ) from e
 
     @staticmethod
     def remove_file(file_path: str) -> bool:

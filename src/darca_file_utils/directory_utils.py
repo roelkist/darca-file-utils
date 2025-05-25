@@ -9,6 +9,9 @@ Each method is documented with its purpose, parameters, and return values.
 
 import os
 import shutil
+import pwd
+
+from typing import Optional
 
 from darca_exception.exception import DarcaException
 from darca_log_facility.logger import DarcaLogger
@@ -50,26 +53,42 @@ class DirectoryUtils:
         return exists
 
     @staticmethod
-    def create_directory(path: str) -> bool:
+    def create_directory(
+        path: str,
+        permissions: Optional[int] = None,
+        user: Optional[str] = None,
+    ) -> bool:
         """
-        Create a directory at the specified path if it does not exist.
+        Create a directory with optional permissions and ownership.
 
         Args:
-            path (str): The directory path to create.
+            path (str): Path to create.
+            permissions (int, optional): chmod-style permission bits (e.g., 0o755).
+            user (str, optional): Username to set as owner (requires privileges).
 
         Returns:
-            bool: True if the directory was created or already exists.
+            bool: True if created or already exists.
 
         Raises:
-            DirectoryUtilsException: If the directory creation fails.
+            DirectoryUtilsException
         """
         if DirectoryUtils.directory_exist(path):
             logger.debug(f"Directory already exists: {path}")
             return True
+
         try:
             os.makedirs(path)
+            if permissions is not None:
+                os.chmod(path, permissions)
+
+            if user is not None:
+                uid = pwd.getpwnam(user).pw_uid
+                gid = pwd.getpwnam(user).pw_gid
+                os.chown(path, uid, gid)
+
             logger.debug(f"Directory created: {path}")
             return True
+
         except Exception as e:
             raise DirectoryUtilsException(
                 message=f"Failed to create directory: {path}",
