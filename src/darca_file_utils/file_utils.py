@@ -8,13 +8,12 @@ Each method is documented with its purpose, parameters, and return values.
 """
 
 import os
+import pwd
 import shutil
-import string
-from typing import Union, Optional
+from typing import Optional, Union
 
 from darca_exception.exception import DarcaException
 from darca_log_facility.logger import DarcaLogger
-import pwd
 
 from darca_file_utils.directory_utils import (
     DirectoryUtils,  # Importing directory utilities
@@ -56,13 +55,12 @@ class FileUtils:
         logger.debug(f"Checked file existence for '{path}': {exists}")
         return exists
 
-
     @staticmethod
     def write_file(
         file_path: str,
         content: Union[str, bytes],
         *,
-        binary: bool = False,                      # ← explicit flag
+        binary: bool = False,  # ← explicit flag
         permissions: Optional[int] = None,
         user: Optional[str] = None,
     ) -> bool:
@@ -72,7 +70,7 @@ class FileUtils:
         Parameters
         ----------
         binary   : bool, default False
-            • False - write as UTF-8 text.  *bytes* will be decoded first.  
+            • False - write as UTF-8 text.  *bytes* will be decoded first.
             • True  - write as raw bytes.   *str* will be UTF-8 encoded.
         permissions : int | None
             chmod bits (e.g. 0o644) applied after writing.
@@ -92,8 +90,13 @@ class FileUtils:
         # ---------- ensure parent directory exists --------------------- #
         directory = os.path.dirname(file_path)
         if directory and not DirectoryUtils.directory_exist(directory):
-            logger.info("Directory does not exist for file: %s – creating it.", directory)
-            if not DirectoryUtils.create_directory(directory, permissions=permissions, user=user):
+            logger.info(
+                "Directory does not exist for file: %s – creating it.",
+                directory,
+            )
+            if not DirectoryUtils.create_directory(
+                directory, permissions=permissions, user=user
+            ):
                 raise FileUtilsException(
                     message="Failed to create directory for file writing.",
                     error_code="DIRECTORY_CREATION_FAILED",
@@ -113,7 +116,7 @@ class FileUtils:
         try:
             # ---------- actual write ----------------------------------- #
             with open(file_path, mode) as f:
-                f.write(content)                      # type: ignore[arg-type]
+                f.write(content)  # type: ignore[arg-type]
 
             if permissions is not None:
                 os.chmod(file_path, permissions)
@@ -122,7 +125,9 @@ class FileUtils:
                 pw = pwd.getpwnam(user)
                 os.chown(file_path, pw.pw_uid, pw.pw_gid)
 
-            logger.debug("Wrote %s file: %s", "binary" if binary else "text", file_path)
+            logger.debug(
+                "Wrote %s file: %s", "binary" if binary else "text", file_path
+            )
             return True
 
         except Exception as e:
@@ -141,7 +146,7 @@ class FileUtils:
     def read_file(
         file_path: str,
         *,
-        binary: bool = False,                       # ← explicit flag
+        binary: bool = False,  # ← explicit flag
     ) -> Union[str, bytes]:
         """
         Read *file_path*.
@@ -149,7 +154,7 @@ class FileUtils:
         Parameters
         ----------
         binary : bool, default False
-            • False - return UTF-8 text (str)  
+            • False - return UTF-8 text (str)
             • True  - return raw bytes
 
         Returns
@@ -171,10 +176,14 @@ class FileUtils:
 
         mode = "rb" if binary else "r"
         try:
-            with open(file_path, mode, encoding=None if binary else "utf-8") as f:
+            with open(
+                file_path, mode, encoding=None if binary else "utf-8"
+            ) as f:
                 data = f.read()
 
-            logger.debug("Read %s file: %s", "binary" if binary else "text", file_path)
+            logger.debug(
+                "Read %s file: %s", "binary" if binary else "text", file_path
+            )
             return data
 
         except Exception as e:

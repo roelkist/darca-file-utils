@@ -8,9 +8,8 @@ Each method is documented with its purpose, parameters, and return values.
 """
 
 import os
-import shutil
 import pwd
-
+import shutil
 from typing import Optional
 
 from darca_exception.exception import DarcaException
@@ -63,8 +62,10 @@ class DirectoryUtils:
 
         Args:
             path (str): Path to create.
-            permissions (int, optional): chmod-style permission bits (e.g., 0o755).
-            user (str, optional): Username to set as owner (requires privileges).
+            permissions (int, optional): chmod-style permission
+            bits (e.g., 0o755).
+            user (str, optional): Username to set as owner
+            (requires privileges).
 
         Returns:
             bool: True if created or already exists.

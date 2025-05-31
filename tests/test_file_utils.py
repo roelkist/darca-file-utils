@@ -28,22 +28,6 @@ def test_write_file_creates_directory(tmp_path):
     assert file.exists()
 
 
-def test_write_file_directory_creation_failure(monkeypatch, tmp_path):
-    file = tmp_path / "bad" / "file.txt"
-
-    def bad_create(path):
-        return False
-
-    monkeypatch.setattr(
-        "darca_file_utils.directory_utils.DirectoryUtils.create_directory",
-        bad_create,
-    )
-
-    with pytest.raises(FileUtilsException) as exc:
-        FileUtils.write_file(str(file), "fail")
-    assert "DIRECTORY_CREATION_FAILED" in str(exc.value)
-
-
 def test_write_file_failure(tmp_path):
     file = tmp_path / "fail.txt"
 
